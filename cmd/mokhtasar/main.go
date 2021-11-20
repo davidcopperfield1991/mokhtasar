@@ -15,6 +15,12 @@ import (
 	"go.uber.org/zap"
 )
 
+type URLS struct {
+	ID  int    `db:"id,key,auto"`
+	URL string `db:"url"`
+	KEY string `db:"key"`
+}
+
 var DB *sql.DB
 
 func randString(n int) string {
@@ -38,6 +44,8 @@ var serverCmd = &cobra.Command{
 	Long:  "serves an http server gardash",
 	Run: func(cmd *cobra.Command, args []string) {
 		db, err := sql.Open("postgres", fmt.Sprintf("host=%s user=%s password=%s database=%s sslmode =%s",
+			// db, err := sql.Open("postgres", fmt.Sprintf("DATABASE_HOST=%s user=%s password=%s database=%s sslmode =%s",
+			// db, err := sql.Open("postgres", fmt.Sprintf("postgres://%v:%v@%v/%v?sslmode=disable",
 			config.DatabaseHost,
 			config.DatabaseUser,
 			config.DatabasePass,
@@ -47,11 +55,11 @@ var serverCmd = &cobra.Command{
 		if err != nil {
 			panic(err)
 		}
-		err = db.Ping()
-		if err != nil {
-			// fmt.Println("ping nashood")
-			panic(err)
-		}
+		// err = db.Ping()
+		// if err != nil {
+		// 	// fmt.Println("ping nashood")
+		// 	panic(err)
+		// }
 		mokhtasar := &pkg.Mokhtasar{
 			DB:              db,
 			RandomGenerator: randString,
@@ -62,7 +70,7 @@ var serverCmd = &cobra.Command{
 		}
 		sl := logger.Sugar()
 		handler := &handler.HTTPHandler{Mokhtasar: mokhtasar, Logger: sl}
-		http.HandleFunc("/short", handler.Shorten)
+		http.HandleFunc("/short", handler.Shortenn)
 		http.HandleFunc("/long", handler.Long)
 		http.ListenAndServe(":8011", nil)
 

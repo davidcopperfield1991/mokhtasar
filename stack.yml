@@ -1,0 +1,21 @@
+version: '3.1'
+services:
+  http-server:
+    build: .
+    image: mokhtasar
+    environment:
+        DATABASE_HOST: db
+    ports:
+         - 8011:8011
+  adminer:
+          image: adminer
+          restart: always
+          ports:
+                - 8080:8080
+  db:
+    image: postgres:10
+    restart: always
+    environment:
+               POSTGRES_USER: root
+               POSTGRES_PASSWORD: changeme
+               POSTGRES_DB: mydb

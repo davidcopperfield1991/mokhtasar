@@ -34,20 +34,20 @@ func (h *HTTPHandler) Long(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (h *HTTPHandler) Shorten(w http.ResponseWriter, r *http.Request) {
+func (h *HTTPHandler) Shortenn(w http.ResponseWriter, r *http.Request) {
 	url := r.URL.Query().Get("url")
 	if url == "" {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("need a short url"))
 		return
 	}
-	url, err := h.Mokhtasar.Shorten(url)
+	key, err := h.Mokhtasar.Shorten(url)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("nemidunam"))
 		h.Logger.Errorf("daghighan nemidunim chi shod , ino bebin : %v", err)
 		return
 	}
-	w.Write([]byte(url))
+	w.Write([]byte(key))
 
 }

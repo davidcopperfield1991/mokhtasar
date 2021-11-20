@@ -9,8 +9,8 @@ func getEnv(key string, defaultValue string) string {
 	return defaultValue
 }
 
-var DatabaseHost = getEnv("MOKHTASAR_DATABASE_HOST", "127.0.0.1")
-var DatabaseUser = getEnv("MOKHTASAR_DATABASE_USER", "postgres")
-var DatabasePass = getEnv("MOKHTASAR_DATABASE_PASS", "admin")
-var DatabaseName = getEnv("MOKHTASAR_DATABASE_NAME", "mokhtasar")
+var DatabaseHost = getEnv("MOKHTASAR_DATABASE_HOST", "db")
+var DatabaseUser = getEnv("MOKHTASAR_DATABASE_USER", "root")
+var DatabasePass = getEnv("MOKHTASAR_DATABASE_PASS", "changeme")
+var DatabaseName = getEnv("MOKHTASAR_DATABASE_NAME", "mydb")
 var DatabaseSSLMode = getEnv("MOKHTASAR_DATABASE_SSL_MODE", "disable")

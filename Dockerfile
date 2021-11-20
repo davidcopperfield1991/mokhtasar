@@ -20,7 +20,7 @@ WORKDIR /app/
 
 COPY --from=builder /cmd .
 
-EXPOSE 5000
+EXPOSE 8011
 
 ENTRYPOINT ["./cmd"]
 
