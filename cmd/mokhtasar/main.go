@@ -1,13 +1,14 @@
 package main
 
 import (
-	"database/sql"
 	"fmt"
 	"math/rand"
 	"net/http"
 	"time"
 
-	"github.com/davidcopperfield1991/mokhtasar/config"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
+
 	handler "github.com/davidcopperfield1991/mokhtasar/handlers"
 	"github.com/davidcopperfield1991/mokhtasar/pkg"
 	_ "github.com/lib/pq"
@@ -15,13 +16,7 @@ import (
 	"go.uber.org/zap"
 )
 
-type URLS struct {
-	ID  int    `db:"id,key,auto"`
-	URL string `db:"url"`
-	KEY string `db:"key"`
-}
-
-var DB *sql.DB
+var DB *gorm.DB
 
 func randString(n int) string {
 	letterRunes := []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
@@ -43,15 +38,25 @@ var serverCmd = &cobra.Command{
 	Short: "serves an http server",
 	Long:  "serves an http server gardash",
 	Run: func(cmd *cobra.Command, args []string) {
-		db, err := sql.Open("postgres", fmt.Sprintf("host=%s user=%s password=%s database=%s sslmode =%s",
-			// db, err := sql.Open("postgres", fmt.Sprintf("DATABASE_HOST=%s user=%s password=%s database=%s sslmode =%s",
-			// db, err := sql.Open("postgres", fmt.Sprintf("postgres://%v:%v@%v/%v?sslmode=disable",
-			config.DatabaseHost,
-			config.DatabaseUser,
-			config.DatabasePass,
-			config.DatabaseName,
-			config.DatabaseSSLMode,
-		))
+
+		dsn := "host=127.0.0.1 user=postgres password=admin dbname=mokhtasar port=5432 sslmode=disable"
+		db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+		// fmt.Println("hi from main")
+		// fmt.Println(db)
+
+		// fmt.Println("bye from main")
+		// rows := db.First(&DB).Model(db.Table("urls"))
+		// fmt.Println(rows)
+
+		// db, err := sql.Open("postgres", fmt.Sprintf("host=%s user=%s password=%s database=%s sslmode =%s",
+		// 	// db, err := sql.Open("postgres", fmt.Sprintf("DATABASE_HOST=%s user=%s password=%s database=%s sslmode =%s",
+		// 	// db, err := sql.Open("postgres", fmt.Sprintf("postgres://%v:%v@%v/%v?sslmode=disable",
+		// 	config.DatabaseHost,
+		// 	config.DatabaseUser,
+		// 	config.DatabasePass,
+		// 	config.DatabaseName,
+		// 	config.DatabaseSSLMode,
+		// ))
 		if err != nil {
 			panic(err)
 		}
@@ -60,7 +65,7 @@ var serverCmd = &cobra.Command{
 		// 	// fmt.Println("ping nashood")
 		// 	panic(err)
 		// }
-		mokhtasar := &pkg.Mokhtasar{
+		mokhtasar := &pkg.PostgresStore{
 			DB:              db,
 			RandomGenerator: randString,
 		}
@@ -70,7 +75,7 @@ var serverCmd = &cobra.Command{
 		}
 		sl := logger.Sugar()
 		handler := &handler.HTTPHandler{Mokhtasar: mokhtasar, Logger: sl}
-		http.HandleFunc("/short", handler.Shortenn)
+		http.HandleFunc("/short", handler.Shorten)
 		http.HandleFunc("/long", handler.Long)
 		http.ListenAndServe(":8011", nil)
 
@@ -82,22 +87,24 @@ var shortCmd = &cobra.Command{
 	Short: "give digili url",
 	Long:  "giv chokh digili url gardash",
 	Run: func(cmd *cobra.Command, args []string) {
-		db, err := sql.Open("postgres", fmt.Sprintf("host=%s user=%s password=%s database=%s sslmode =%s",
-			config.DatabaseHost,
-			config.DatabaseUser,
-			config.DatabasePass,
-			config.DatabaseName,
-			config.DatabaseSSLMode,
-		))
+		dsn := "host=127.0.0.1 user=postgres password=admin dbname=mokhtasar port=5432 sslmode=disable"
+		db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+		// db, err := sql.Open("postgres", fmt.Sprintf("host=%s user=%s password=%s database=%s sslmode =%s",
+		// 	config.DatabaseHost,
+		// 	config.DatabaseUser,
+		// 	config.DatabasePass,
+		// 	config.DatabaseName,
+		// 	config.DatabaseSSLMode,
+		// ))
 		if err != nil {
 			panic(err)
 		}
-		err = db.Ping()
-		if err != nil {
-			// fmt.Println("ping nashood")
-			panic(err)
-		}
-		mokhtasar := &pkg.Mokhtasar{
+		// err = db.Ping()
+		// if err != nil {
+		// 	// fmt.Println("ping nashood")
+		// 	panic(err)
+		// }
+		mokhtasar := &pkg.PostgresStore{
 			DB:              db,
 			RandomGenerator: randString,
 		}
@@ -111,27 +118,30 @@ var shortCmd = &cobra.Command{
 		fmt.Println(key)
 	},
 }
+
 var longCmd = &cobra.Command{
 	Use:   "long",
 	Short: "give orginal url",
 	Long:  "giv chokh orginal url gardash",
 	Run: func(cmd *cobra.Command, args []string) {
-		db, err := sql.Open("postgres", fmt.Sprintf("host=%s user=%s password=%s database=%s sslmode =%s",
-			config.DatabaseHost,
-			config.DatabaseUser,
-			config.DatabasePass,
-			config.DatabaseName,
-			config.DatabaseSSLMode,
-		))
+		dsn := "host=127.0.0.1 user=postgres password=admin dbname=mokhtasar port=5432 sslmode=disable"
+		db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+		// db, err := sql.Open("postgres", fmt.Sprintf("host=%s user=%s password=%s database=%s sslmode =%s",
+		// 	config.DatabaseHost,
+		// 	config.DatabaseUser,
+		// 	config.DatabasePass,
+		// 	config.DatabaseName,
+		// 	config.DatabaseSSLMode,
+		// ))
 		if err != nil {
 			panic(err)
 		}
-		err = db.Ping()
-		if err != nil {
-			// fmt.Println("ping nashood")
-			panic(err)
-		}
-		mokhtasar := &pkg.Mokhtasar{
+		// err = db.Ping()
+		// if err != nil {
+		// 	// fmt.Println("ping nashood")
+		// 	panic(err)
+		// }
+		mokhtasar := &pkg.PostgresStore{
 			DB:              db,
 			RandomGenerator: randString,
 		}
@@ -148,6 +158,7 @@ var longCmd = &cobra.Command{
 }
 
 func main() {
+	// rootCmd.AddCommand(shortCmd, longCmd, serverCmd)
 	rootCmd.AddCommand(shortCmd, longCmd, serverCmd)
 	err := rootCmd.Execute()
 	if err != nil {

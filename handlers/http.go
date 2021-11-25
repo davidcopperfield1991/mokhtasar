@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/davidcopperfield1991/mokhtasar/pkg"
@@ -8,7 +9,7 @@ import (
 )
 
 type HTTPHandler struct {
-	Mokhtasar *pkg.Mokhtasar
+	Mokhtasar *pkg.PostgresStore
 	Logger    *zap.SugaredLogger
 }
 
@@ -34,7 +35,7 @@ func (h *HTTPHandler) Long(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (h *HTTPHandler) Shortenn(w http.ResponseWriter, r *http.Request) {
+func (h *HTTPHandler) Shorten(w http.ResponseWriter, r *http.Request) {
 	url := r.URL.Query().Get("url")
 	if url == "" {
 		w.WriteHeader(http.StatusBadRequest)
@@ -49,5 +50,5 @@ func (h *HTTPHandler) Shortenn(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.Write([]byte(key))
-
+	fmt.Println("injiye")
 }
